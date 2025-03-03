@@ -3,6 +3,7 @@ import FloatingButton from "../components/buttons/FloatingButton";
 import PostItem from "../components/PostItem";
 import { PostInterface } from "../constants/PostInterface";
 import { supabase } from "../libs/supabase";
+import Loader from "../components/Loader";
 
 export default function Posts() {
   const [data, setData] = useState<PostInterface[] | undefined>(undefined);
@@ -32,16 +33,19 @@ export default function Posts() {
         Basic Supabase
       </h1>
 
-      <div className="w-full mt-8 gap-8 flex flex-col">
-        {data &&
+      <div className="w-full mt-8 gap-4 flex flex-col">
+        {data && loaded ? (
           data.map((item) => (
             <PostItem
               key={item.id}
-              name={item.profiles.name}
+              name={item?.profiles?.name || ""}
               content={item.content}
               created_at={item.created_at}
             />
-          ))}
+          ))
+        ) : (
+          <Loader />
+        )}
       </div>
 
       <FloatingButton />

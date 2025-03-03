@@ -5,17 +5,20 @@ import { supabase } from "../../libs/supabase";
 import PopupNotif from "../modals/PopupNotif";
 import ButtonPrimary from "../buttons/ButtonPrimary";
 import ErrorText from "../texts/ErrorText";
+import RoleInput from "../inputs/RoleInput";
 
 const initialValues = {
   name: "",
   email: "",
   password: "",
+  role: "",
 };
 
 export default function RegisterForm() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [msg, setMsg] = useState<string>("");
+  const [title, setTitle] = useState<string>("");
 
   const formik = useFormik({
     initialValues: initialValues,
@@ -52,11 +55,14 @@ export default function RegisterForm() {
       }
 
       const user = data.user;
-      const { error: profileError } = await supabase
-        .from("profiles")
-        .insert([
-          { id: user?.id, name: values.name, email: values.email, role: 1 },
-        ]);
+      const { error: profileError } = await supabase.from("profiles").insert([
+        {
+          id: user?.id,
+          name: values.name,
+          email: values.email,
+          role: values.role ? values.role : 1,
+        },
+      ]);
 
       if (profileError) {
         setMsg(profileError.message);
@@ -65,8 +71,11 @@ export default function RegisterForm() {
       }
 
       setIsLoading(false);
+      setTitle("Berhasil membuat akun");
+      setMsg("");
       resetForm({ values: initialValues });
-      return;
+
+      return setIsOpen(true);
     },
   });
 
@@ -111,6 +120,16 @@ export default function RegisterForm() {
             <ErrorText msg={formik.errors.password} />
           )}
 
+          <label className="mt-8 text-sm">Role</label>
+          <RoleInput
+            onSelected={(id) => {
+              console.log("id", id);
+            }}
+          />
+          {formik.touched.role && formik.errors.role && (
+            <ErrorText msg={formik.errors.role} />
+          )}
+
           <ButtonPrimary
             className="mt-8"
             type="submit"
@@ -120,7 +139,12 @@ export default function RegisterForm() {
         </div>
       </form>
 
-      <PopupNotif isOpen={isOpen} setIsOpen={setIsOpen} msg={msg} />
+      <PopupNotif
+        isOpen={isOpen}
+        setIsOpen={setIsOpen}
+        msg={msg}
+        title={title}
+      />
     </>
   );
 }

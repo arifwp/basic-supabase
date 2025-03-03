@@ -26,7 +26,7 @@ export default function PopupNotif({
       open={isOpen}
       as="div"
       className="relative z-10 focus:outline-none"
-      onClose={close}
+      onClose={() => setIsOpen(false)}
     >
       <DialogBackdrop
         className={"fixed inset-0 bg-black/60 backdrop-blur-sm"}

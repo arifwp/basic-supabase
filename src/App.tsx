@@ -2,6 +2,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Auth from "./pages/Auth";
 import ResetPassword from "./pages/ResetPassword";
 import Posts from "./pages/Posts";
+import UserRoute from "./middlewares/UserRoute";
 
 const router = createBrowserRouter([
   {
@@ -17,14 +18,16 @@ const router = createBrowserRouter([
       },
       {
         path: "/posts",
-        element: <Posts />,
+        element: (
+          <UserRoute>
+            <Posts />
+          </UserRoute>
+        ),
       },
     ],
   },
 ]);
 
-function App() {
+export default function App() {
   return <RouterProvider router={router} />;
 }
-
-export default App;

@@ -7,9 +7,9 @@ import ForgotPasswordModal from "../modals/ForgotPasswordModal";
 import PopupNotif from "../modals/PopupNotif";
 import ErrorText from "../texts/ErrorText";
 import { useNavigate } from "react-router-dom";
+import { setCookie } from "typescript-cookie";
 
 export default function LoginForm() {
-  const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [msg, setMsg] = useState<string>("");
@@ -25,12 +25,11 @@ export default function LoginForm() {
       password: yup.string().required("Password harus diisi"),
     }),
     onSubmit: async (values) => {
-      console.log("values", values);
       const email = values.email;
       const password = values.password;
       setIsLoading(true);
 
-      const { error } = await supabase.auth.signInWithPassword({
+      const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
@@ -40,6 +39,15 @@ export default function LoginForm() {
         setMsg(error.message);
         return setIsOpen(true);
       }
+
+      const token = data.session.access_token;
+      const expiresAt = data.session.expires_at ?? 0;
+      const expiresDate = new Date(expiresAt * 1000);
+      setCookie("userToken", token, {
+        expires: expiresDate,
+        path: "/",
+        secure: import.meta.env.VITE_APP_MODE === "production",
+      });
 
       navigate("/posts");
       return;
@@ -76,12 +84,7 @@ export default function LoginForm() {
             <ErrorText msg={formik.errors.password} />
           )}
 
-          <p
-            className="text-gray-300 mt-2 text-sm flex justify-end cursor-pointer"
-            onClick={() => setIsOpenModal(true)}
-          >
-            Lupa password?
-          </p>
+          <ForgotPasswordModal />
 
           <ButtonPrimary
             className="mt-8"
@@ -93,8 +96,6 @@ export default function LoginForm() {
       </form>
 
       <PopupNotif isOpen={isOpen} setIsOpen={setIsOpen} msg={msg} />
-
-      <ForgotPasswordModal isOpen={isOpenModal} setIsOpen={setIsOpen} />
     </>
   );
 }

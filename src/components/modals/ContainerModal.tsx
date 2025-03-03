@@ -13,7 +13,7 @@ interface Props {
   msg?: string;
   isOpen: boolean;
   btnText?: string;
-  children: React.ReactNode;
+  children?: React.ReactNode;
   onBtnSubmit: VoidFunction;
   isLoading?: boolean;
   setIsOpen: Dispatch<SetStateAction<boolean>>;

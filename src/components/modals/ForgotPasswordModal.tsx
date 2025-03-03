@@ -1,18 +1,14 @@
 import { useFormik } from "formik";
-import ContainerModal from "./ContainerModal";
+import { useState } from "react";
 import * as yup from "yup";
-import ErrorText from "../texts/ErrorText";
 import { supabase } from "../../libs/supabase";
+import ErrorText from "../texts/ErrorText";
+import ContainerModal from "./ContainerModal";
 import PopupNotif from "./PopupNotif";
-import { Dispatch, SetStateAction, useState } from "react";
 
-interface Props {
-  isOpen: boolean;
-  setIsOpen: Dispatch<SetStateAction<boolean>>;
-}
-
-export default function ForgotPasswordModal({ isOpen, setIsOpen }: Props) {
+export default function ForgotPasswordModal() {
   const [isOpenPopup, setIsOpenPopup] = useState<boolean>(false);
+  const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
 
   const formik = useFormik({
     initialValues: { email: "" },
@@ -41,11 +37,18 @@ export default function ForgotPasswordModal({ isOpen, setIsOpen }: Props) {
 
   return (
     <>
+      <p
+        className="text-gray-300 mt-2 text-sm flex justify-end cursor-pointer"
+        onClick={() => setIsOpenModal(true)}
+      >
+        Lupa password?
+      </p>
+
       <ContainerModal
         title="Gausah Khawatir"
         msg="Kami bakalan ngirim link reset password ke email kamu"
-        isOpen={isOpen}
-        setIsOpen={setIsOpen}
+        isOpen={isOpenModal}
+        setIsOpen={setIsOpenModal}
         onBtnSubmit={() => {
           formik.handleSubmit();
         }}

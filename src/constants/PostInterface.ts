@@ -10,5 +10,5 @@ export interface PostInterface {
   images: string[] | null;
   created_at: Date;
   updated_at: Date | null;
-  profiles: ProfileInterface;
+  profiles: ProfileInterface | null;
 }

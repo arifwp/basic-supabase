@@ -11,7 +11,7 @@ export default function PostItem({ name, content, created_at }: Props) {
 
       <p className="mt-2 text-xs">{content}</p>
 
-      <p className="mt-4 text-xs text-gray-400">{`${created_at || ""}`}</p>
+      <p className="mt-2 text-xs text-gray-400">{`${created_at || ""}`}</p>
     </div>
   );
 }
